@@ -34,15 +34,20 @@ public class Controller implements Initializable {
     private void sendFile(String msg) throws IOException {
         Path file = Paths.get(REPO, msg);
         long size = Files.size(file);
-        os.writeUTF(msg);
-        os.writeLong(size);
+        if (Files.exists(file)) {
+            os.writeUTF(msg);
+            os.writeLong(size);
 
-        InputStream inputStream = Files.newInputStream(file);
-        int read;
-        while ((read = inputStream.read(buffer)) != -1) {
-            os.write(buffer, 0, read);
+            InputStream inputStream = Files.newInputStream(file);
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                os.write(buffer, 0, read);
+            }
+            os.flush();
+        }else {
+            os.writeUTF(msg);
+            os.flush();
         }
-        os.flush();
     }
 
     @Override
